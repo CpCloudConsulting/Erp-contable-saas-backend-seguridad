@@ -1,0 +1,20 @@
+{
+  "name": "Erp-contable-saas-backend-security",
+  "version": "1.0.0",
+  "main": "dist/handler.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node --require aws-lambda-ric dist/handler.handler"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "pg": "^8.11.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.0",
+    "@types/node": "^20.0.0",
+    "@types/pg": "^8.18.0",
+    "typescript": "^5.0.0"
+  }
+}

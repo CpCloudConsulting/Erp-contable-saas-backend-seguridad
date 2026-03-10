@@ -1,0 +1,36 @@
+services:
+
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: contable
+      POSTGRES_PASSWORD: contable123
+      POSTGRES_DB: contable_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U contable"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: .
+    container_name: contable_backend
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_USER: contable
+      DB_PASSWORD: contable123
+      DB_DATABASE: contable_db
+    ports:
+      - "9000:8080"
+
+volumes:
+  pgdata:
