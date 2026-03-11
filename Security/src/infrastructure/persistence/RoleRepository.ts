@@ -1,10 +1,45 @@
 import { Pool } from "pg";
 import { Role } from "../../domain/entities/Role";
 import { RoleRepositoryPort } from "../../domain/repositories/RoleRepositoryPort";
+import { RoleModule } from "../../domain/entities/RolModule";
 
 export class RoleRepository implements RoleRepositoryPort {
 
   constructor(private pool: Pool) {}
+
+
+  async asignRole(id: string, moduleIds: string[]): Promise<RoleModule | null> {
+
+  const result = await this.pool.query(
+    `INSERT INTO core.rol_modulos (id_rol, id_mod)
+     VALUES ($1, $2)
+     ON CONFLICT (id_rol, id_mod) DO NOTHING
+     RETURNING id_rol, id_mod`,
+    [id, moduleIds[0]]
+  );
+
+  if (result.rows.length === 0) {
+    return null;
+  }
+
+  const row = result.rows[0];
+
+  return new RoleModule(row.id_rol, row.id_mod);
+}
+
+  async listModuleByRole(id: string): Promise<string[]> {
+
+      const result = await this.pool.query(
+        `SELECT m.nombre
+        FROM core.rol_modulos rm
+        JOIN core.modulos m 
+            ON m.id_mod = rm.id_mod
+        WHERE rm.id_rol = $1`,
+        [id]
+      );
+
+      return result.rows.map((r : any) => r.nombre);
+    }
 
 
   async createRole(role: Role): Promise<Role> {

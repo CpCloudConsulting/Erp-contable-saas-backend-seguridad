@@ -9,11 +9,11 @@ export class Controller {
 
   constructor() {
     this.routes = {
-      "POST:/empresas": this.createCompany,
-      "GET:/empresas": this.companyList,
-      "GET:/empresas/{id}": this.findCompany,
-      "PATCH:/empresas/{id}/status": this.updateCompanyStatus,
-      "PUT:/empresas": this.updateCompany,
+      "GET:/roles": this.listRole,
+      "POST:/roles": this.createRole,
+      "PUT:/roles": this.updateRole,
+      "POST:/roles/{id}/asign": this.asignRole,
+      "GET:/roles/{id}/modules": this.moduleByRole,
     };
   }
 
@@ -36,30 +36,45 @@ export class Controller {
     }
   }
 
-  private async createCompany(event: CustomAPIGatewayEvent) {
+  private async listRole(event: CustomAPIGatewayEvent) {
+    const container = new Container();
+    const roles = await container.listRole.execute();
+    return this.ok(roles);
+  }
+
+  private async createRole(event: CustomAPIGatewayEvent) {
     const body = JSON.parse(event.body || "{}");
-    return this.ok(await new Container().createCompany.execute(body));
+    const container = new Container();
+    const role = await container.createRole.execute(body);
+    return this.ok(role);
   }
 
-  private async companyList() {
-    return this.ok(await new Container().listCompanies.execute());
+  private async updateRole(event: CustomAPIGatewayEvent) {
+    const body = JSON.parse(event.body || "{}");
+    const container = new Container();
+    const role = await container.updateRole.execute(body);
+    return this.ok(role);
   }
 
-  private async findCompany(event: CustomAPIGatewayEvent) {
+  private async asignRole(event: CustomAPIGatewayEvent) {
     const id = event.pathParameters?.id;
-    return this.ok(await new Container().findCompany.execute(id));
-  }
-
-  private async updateCompanyStatus(event: CustomAPIGatewayEvent) {
-    const id = Number(event.pathParameters?.id);
-    return this.ok(await new Container().updateCompanyStatus.execute(id));
-  }
-
-  public async updateCompany(event: CustomAPIGatewayEvent) {
+    if (!id) {
+      return this.badRequest("ID is required");
+    }
     const body = JSON.parse(event.body || "{}");
-    return this.ok(await new Container().updateCompany.execute(body));
+    const container = new Container();
+    const role = await container.asignRole.execute(id, body);
+    return this.ok(role);
   }
 
+  private async moduleByRole(event: CustomAPIGatewayEvent) {
+    const id = event.pathParameters?.id;
+    const container = new Container();
+    const modules = await container.moduleByRole.execute(id);
+    return this.ok(modules);
+  }
+
+  
   private ok(data: any) {
     return { statusCode: 200, body: JSON.stringify(data) };
   }

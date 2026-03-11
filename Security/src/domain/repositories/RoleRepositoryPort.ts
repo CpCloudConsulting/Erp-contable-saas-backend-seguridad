@@ -1,4 +1,5 @@
 import { Role } from "../entities/Role";
+import { RoleModule } from "../entities/RolModule";
 
 export interface RoleRepositoryPort {
 
@@ -18,6 +19,17 @@ export interface RoleRepositoryPort {
    * Lista todos los roles
    */
   listRole(): Promise<Role>;
+
+   /**
+   * asignar un rol
+   */
+  asignRole(id: string, moduleIds: string[]): Promise<RoleModule | null>;
+
+
+   /**
+   * Lista modulos permitidos por role
+   */
+  listModuleByRole(id: string): Promise<string[]>;
 
 
 }
