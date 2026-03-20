@@ -29,6 +29,4 @@ export class Container {
   public moduleByRole = new ModuleByRole(this.roleRepository);
   public updateRole = new UpdateRole(this.roleRepository);
   
-
-
 }

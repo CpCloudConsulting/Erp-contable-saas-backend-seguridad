@@ -14,6 +14,10 @@ export class Controller {
       "PUT:/roles": this.updateRole,
       "POST:/roles/{id}/asign": this.asignRole,
       "GET:/roles/{id}/modules": this.moduleByRole,
+      "POST:/user": this.createUser,
+      "PUT:/user": this.updateUser,
+      "GET:/empresa/{id}/user": this.findUserByCompany,
+      "GET:/user/{id}/cognito": this.findUser,
     };
   }
 
@@ -74,7 +78,37 @@ export class Controller {
     return this.ok(modules);
   }
 
-  
+  private async createUser(event: CustomAPIGatewayEvent){
+     const body = JSON.parse(event.body || "{}");
+    const container = new Container();
+    const user = await container.createUser.execute(body);
+    return this.ok(user);
+  }
+
+  private async updateUser(event: CustomAPIGatewayEvent){
+    const body = JSON.parse(event.body || "{}");
+    const container = new Container();
+    const user = await container.updateUser.execute(body);
+    return this.ok(user);
+  }
+
+  private async findUserByCompany(event: CustomAPIGatewayEvent){
+    const id = Number(event.pathParameters?.id);
+    const container = new Container();
+    const user = await container.findUserByCompany.execute(id);
+    return this.ok(user);
+  }
+
+   private async findUser(event: CustomAPIGatewayEvent){
+    const id = event.pathParameters?.id;
+    if (!id) {
+      return this.badRequest("ID is required");
+    }
+    const container = new Container();
+    const user = await container.findUserByCognito.execute(id);
+    return this.ok(user);
+  }
+
   private ok(data: any) {
     return { statusCode: 200, body: JSON.stringify(data) };
   }
