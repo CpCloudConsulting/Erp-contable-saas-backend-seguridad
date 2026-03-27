@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_USER: contable
       POSTGRES_PASSWORD: contable123
-      POSTGRES_DB: contable_db
+      POSTGRES_DB: contable
     ports:
       - "5432:5432"
     volumes:
@@ -28,7 +28,7 @@ services:
       DB_HOST: postgres
       DB_USER: contable
       DB_PASSWORD: contable123
-      DB_DATABASE: contable_db
+      DB_DATABASE: contable
     ports:
       - "9000:8080"
 

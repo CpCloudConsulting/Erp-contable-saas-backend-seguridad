@@ -18,7 +18,7 @@ export interface RoleRepositoryPort {
    /**
    * Lista todos los roles
    */
-  listRole(): Promise<Role>;
+  listRole(): Promise<Role[]>;
 
    /**
    * asignar un rol

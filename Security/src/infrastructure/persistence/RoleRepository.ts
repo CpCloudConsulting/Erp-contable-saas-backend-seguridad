@@ -80,16 +80,17 @@ export class RoleRepository implements RoleRepositoryPort {
   }
   
   
-  async listRole(): Promise<Role> {
+    async listRole(): Promise<Role[]> {
 
-    const result = await this.pool.query(
-          `SELECT nombre, descripcion FROM core.roles`
-        );
+  const result = await this.pool.query(
+    `SELECT nombre, descripcion FROM core.roles`
+  );
 
-        const row = result.rows;
-        return new Role (
-          row.nombre,
-          row.descripcion
-        );
-      }
+  return result.rows.map(row => 
+    new Role(
+      row.nombre,
+      row.descripcion
+    )
+  );
+}
 }
