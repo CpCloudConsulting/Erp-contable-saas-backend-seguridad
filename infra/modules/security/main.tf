@@ -1,23 +1,11 @@
-resource "aws_security_group" "lambda" {
-  name   = "lambda-sg"
-  vpc_id = var.vpc_id
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+data "aws_security_group" "lambda" {
+  filter {
+    name   = "group-name"
+    values = ["lambda-sg"]
   }
-}
 
-resource "aws_security_group" "rds" {
-  name   = "rds-sg"
-  vpc_id = var.vpc_id
-
-  ingress {
-    from_port       = 5432
-    to_port         = 5432
-    protocol        = "tcp"
-    security_groups = [aws_security_group.lambda.id]
+  filter {
+    name   = "vpc-id"
+    values = [var.vpc_id]
   }
 }
