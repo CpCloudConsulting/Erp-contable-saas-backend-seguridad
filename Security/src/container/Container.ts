@@ -1,6 +1,6 @@
 import { UserRepository } from "../infrastructure/persistence/UserRepository";
 import { RoleRepository } from "../infrastructure/persistence/RoleRepository";
-import { pool } from "../infrastructure/db/pool";
+import { getPool } from "../infrastructure/db/pool";
 import { CreateUserCompany } from "../application/use-cases/users/CreateUserCompany";
 import { FindUserByCompany } from "../application/use-cases/users/FindUserByCompany";
 import { FindUserByCognito } from "../application/use-cases/users/FindUserByCognito";
@@ -13,8 +13,8 @@ import { UpdateRole } from "../application/use-cases/role/UpdateRole";
 
 export class Container {
 
-  private userRepository = new UserRepository(pool);
-  private roleRepository = new RoleRepository(pool);
+  private userRepository = new UserRepository(getPool());
+  private roleRepository = new RoleRepository(getPool());
 
   //Funciones de usuarios
   public createUser = new CreateUserCompany(this.userRepository);

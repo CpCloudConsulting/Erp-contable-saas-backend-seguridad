@@ -6,7 +6,7 @@ const controller = new Controller();
 
 export const handler = async (event: CustomAPIGatewayEvent) => {
   try {
-    const schema = event.requestContext.authorizer?.schema as string;
+    const schema = event.headers["x-schema"] || event.requestContext.authorizer?.schema as string;
 
     if (!schema) {
       return response(401, "Schema no definido en token");

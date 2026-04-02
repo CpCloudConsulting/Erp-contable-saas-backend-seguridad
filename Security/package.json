@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/handler.js",
   "scripts": {
-    "build": "tsc",
+    "build": "esbuild src/handler.ts --bundle --platform=node --target=node20 --outfile=dist/handler.js",
     "start": "node --require aws-lambda-ric dist/handler.handler"
   },
   "dependencies": {
@@ -15,6 +15,7 @@
     "@types/aws-lambda": "^8.10.0",
     "@types/node": "^20.0.0",
     "@types/pg": "^8.18.0",
+    "esbuild": "^0.27.5",
     "typescript": "^5.0.0"
   }
 }

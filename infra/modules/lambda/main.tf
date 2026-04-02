@@ -4,6 +4,11 @@ resource "aws_lambda_function" "this" {
     handler       = var.handler
     filename      = data.archive_file.lambda_zip.output_path
     role = var.role_arn
+    source_code_hash = filebase64sha256(data.archive_file.lambda_zip.output_path)
+    
+    environment {
+      variables = var.environment_variables
+    }
 
     vpc_config {
       subnet_ids         = var.subnet_ids

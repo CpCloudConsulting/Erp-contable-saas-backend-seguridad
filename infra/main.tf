@@ -15,7 +15,7 @@ data "aws_db_instance" "existing" {
 module "lambda" {
   source                = "./modules/lambda"
   name                  = "erp-security-service"
-  handler               = "dist/handler.handler"
+  handler               = "handler.handler"
   filename              = "../dist.zip"
   subnet_ids            = module.vpc.private_subnet_ids
   security_group_ids    = [module.security.lambda_sg_id]

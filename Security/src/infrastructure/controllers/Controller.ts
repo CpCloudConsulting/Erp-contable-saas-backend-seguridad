@@ -6,27 +6,27 @@ type RouteHandler = (event: CustomAPIGatewayEvent) => Promise<any>;
 export class Controller {
 
   private routes: Record<string, RouteHandler>;
+  private Domain = "/contable";
 
   constructor() {
     this.routes = {
-      "GET:/roles": this.listRole,
-      "POST:/roles": this.createRole,
-      "PUT:/roles": this.updateRole,
-      "POST:/roles/{id}/asign": this.asignRole,
-      "GET:/roles/{id}/modules": this.moduleByRole,
-      "POST:/user": this.createUser,
-      "PUT:/user": this.updateUser,
-      "GET:/empresa/{id}/user": this.findUserByCompany,
-      "GET:/user/{id}/cognito": this.findUser,
+      "GET /roles": this.listRole,
+      "POST /roles": this.createRole,
+      "PUT /roles": this.updateRole,
+      "POST /roles/{id}/asign": this.asignRole,
+      "GET /roles/{id}/modules": this.moduleByRole,
+      "POST /user": this.createUser,
+      "PUT /user": this.updateUser,
+      "GET /empresa/{id}/user": this.findUserByCompany,
+      "GET /user/{id}/cognito": this.findUser,
     };
   }
 
 
   async handle(event: CustomAPIGatewayEvent) {
-    const method = event.requestContext.http.method;
-    const path = event.rawPath;
-
-    const routeKey = `${method}:${path}`;
+    let routeKey = event.routeKey;
+    routeKey = routeKey.replace(this.Domain, "");
+    
     const handler = this.routes[routeKey];
 
     if (!handler) {
