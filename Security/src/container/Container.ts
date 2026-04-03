@@ -1,5 +1,6 @@
 import { UserRepository } from "../infrastructure/persistence/UserRepository";
 import { RoleRepository } from "../infrastructure/persistence/RoleRepository";
+import { ModuleRepository } from "../infrastructure/persistence/ModuleRepository";
 import { getPool } from "../infrastructure/db/pool";
 import { CreateUserCompany } from "../application/use-cases/users/CreateUserCompany";
 import { FindUserByCompany } from "../application/use-cases/users/FindUserByCompany";
@@ -10,11 +11,15 @@ import { AsingRole } from "../application/use-cases/role/AsingRole";
 import { ListRole } from "../application/use-cases/role/ListRole";
 import { ModuleByRole } from "../application/use-cases/role/ModuleByRole";
 import { UpdateRole } from "../application/use-cases/role/UpdateRole";
+import { CreateModule } from "../application/use-cases/module/CreateModule";
+import { ListModule } from "../application/use-cases/module/ListModule";
+import { UpdateModule } from "../application/use-cases/module/UpdateModule";
 
 export class Container {
 
   private userRepository = new UserRepository(getPool());
   private roleRepository = new RoleRepository(getPool());
+  private moduleRepository = new ModuleRepository(getPool());
 
   //Funciones de usuarios
   public createUser = new CreateUserCompany(this.userRepository);
@@ -28,5 +33,10 @@ export class Container {
   public listRole = new ListRole(this.roleRepository);
   public moduleByRole = new ModuleByRole(this.roleRepository);
   public updateRole = new UpdateRole(this.roleRepository);
+
+  // funciones de modulos
+  public createModule = new CreateModule(this.moduleRepository);
+  public updateModule = new UpdateModule(this.moduleRepository);
+  public listModule = new ListModule(this.moduleRepository);
   
 }

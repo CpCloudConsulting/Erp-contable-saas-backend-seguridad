@@ -15,7 +15,7 @@ export interface UserRepositoryPort {
   /**
    * Obtiene usuario por ID
    */
-  userByCompany(id: number): Promise<User | null>;
+  userByCompany(id: number): Promise<User[]>;
 
 
   getByCognitoId(id: string): Promise<User | null>;

@@ -6,15 +6,15 @@ export class UserRepository implements UserRepositoryPort {
 
   constructor(private pool: Pool) {}
 
-  async userByCompany(id: number): Promise<User | null> {
+  async userByCompany(id: number): Promise<User[]> {
     const result = await this.pool.query(
       `SELECT * FROM core.usuarios WHERE id_empresa=$1`,
       [id]
     );
-    if (result.rows.length === 0) return null;
+    if (result.rows.length === 0) return [];
 
-    const row = result.rows[0];
-    return new User(
+    return result.rows.map((row: any) => new User(
+      row.id_user,
       row.cognito_sub,
       row.nombre,
       row.apellido,
@@ -22,7 +22,7 @@ export class UserRepository implements UserRepositoryPort {
       row.id_rol,
       row.id_empresa,
       row.is_active
-    );
+    ));
   }
 
   async createUser(user: User): Promise<User> {
@@ -45,6 +45,7 @@ export class UserRepository implements UserRepositoryPort {
   const row = result.rows[0];
 
   return new User(
+    row.id_user,
     row.cognito_sub,
     row.nombre,
     row.apellido,
@@ -60,18 +61,16 @@ export class UserRepository implements UserRepositoryPort {
       `UPDATE core.usuarios SET nombre=$2, apellido=$3, email=$4
        WHERE id_user=$1 RETURNING *`,
       [
-        user.cognito_sub,
+        user.id,
         user.nombre,
         user.apellido,
-        user.email,
-        user.id_rol,
-        user.id_empresa,
-        user.is_active,
+        user.email
       ]
     );
 
     const row = result.rows[0];
     return new User(
+      row.id_user,
       row.cognito_sub,
       row.nombre,
       row.apellido,
@@ -91,6 +90,7 @@ export class UserRepository implements UserRepositoryPort {
 
     const row = result.rows[0];
     return new User(
+      row.id_user,
       row.cognito_sub,
       row.nombre,
       row.apellido,

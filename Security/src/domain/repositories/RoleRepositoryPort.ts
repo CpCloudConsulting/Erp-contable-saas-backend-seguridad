@@ -23,7 +23,7 @@ export interface RoleRepositoryPort {
    /**
    * asignar un rol
    */
-  asignRole(id: string, moduleIds: string[]): Promise<RoleModule | null>;
+  asignRole(id: number, moduleIds: number[]): Promise<RoleModule[]>;
 
 
    /**

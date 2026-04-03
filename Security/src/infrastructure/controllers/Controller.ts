@@ -6,7 +6,7 @@ type RouteHandler = (event: CustomAPIGatewayEvent) => Promise<any>;
 export class Controller {
 
   private routes: Record<string, RouteHandler>;
-  private Domain = "/contable";
+  private Domain = "/security";
 
   constructor() {
     this.routes = {
@@ -15,6 +15,9 @@ export class Controller {
       "PUT /roles": this.updateRole,
       "POST /roles/{id}/asign": this.asignRole,
       "GET /roles/{id}/modules": this.moduleByRole,
+      "POST /module": this.createModule,
+      "PUT /module": this.updateModule,
+      "GET /module": this.listModule,
       "POST /user": this.createUser,
       "PUT /user": this.updateUser,
       "GET /empresa/{id}/user": this.findUserByCompany,
@@ -60,14 +63,34 @@ export class Controller {
     return this.ok(role);
   }
 
+  private async createModule (event: CustomAPIGatewayEvent) {
+    const body = JSON.parse(event.body || "{}");
+    const container = new Container();
+    const module = await container.createModule.execute(body);
+    return this.ok(module);
+  }
+
+  private async updateModule (event: CustomAPIGatewayEvent) {
+    const body = JSON.parse(event.body || "{}");
+    const container = new Container();
+    const module = await container.updateModule.execute(body);
+    return this.ok(module);
+  }
+
+  private async listModule(event: CustomAPIGatewayEvent) {
+    const container = new Container();
+    const modules = await container.listModule.execute();
+    return this.ok(modules);
+  }
+
   private async asignRole(event: CustomAPIGatewayEvent) {
-    const id = event.pathParameters?.id;
+    const id = Number(event.pathParameters?.id);
     if (!id) {
       return this.badRequest("ID is required");
     }
     const body = JSON.parse(event.body || "{}");
     const container = new Container();
-    const role = await container.asignRole.execute(id, body);
+    const role = await container.asignRole.execute(id, body.moduleIds);
     return this.ok(role);
   }
 

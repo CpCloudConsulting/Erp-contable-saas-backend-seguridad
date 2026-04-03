@@ -8,24 +8,20 @@ export class RoleRepository implements RoleRepositoryPort {
   constructor(private pool: Pool) {}
 
 
-  async asignRole(id: string, moduleIds: string[]): Promise<RoleModule | null> {
+  async asignRole(id: number, moduleIds: number[]): Promise<RoleModule[]> {
 
-  const result = await this.pool.query(
-    `INSERT INTO core.rol_modulos (id_rol, id_mod)
-     VALUES ($1, $2)
-     ON CONFLICT (id_rol, id_mod) DO NOTHING
-     RETURNING id_rol, id_mod`,
-    [id, moduleIds[0]]
-  );
+      const result = await this.pool.query(
+        `INSERT INTO core.rol_modulos (id_rol, id_mod)
+        SELECT $1, UNNEST($2::int[])
+        ON CONFLICT (id_rol, id_mod) DO NOTHING
+        RETURNING id_rol, id_mod`,
+        [id, moduleIds]
+      );
 
-  if (result.rows.length === 0) {
-    return null;
+      return result.rows.map(
+        row => new RoleModule(row.id_rol, row.id_mod)
+      );
   }
-
-  const row = result.rows[0];
-
-  return new RoleModule(row.id_rol, row.id_mod);
-}
 
   async listModuleByRole(id: string): Promise<string[]> {
 
@@ -57,6 +53,7 @@ export class RoleRepository implements RoleRepositoryPort {
   const row = result.rows[0];
 
   return new Role(
+    row.id_rol,
     row.nombre,
     row.descripcion
   );
@@ -65,8 +62,9 @@ export class RoleRepository implements RoleRepositoryPort {
   async updateRole(role: Role): Promise<Role> {
     const result = await this.pool.query(
       `UPDATE core.roles SET nombre=$2, descripcion=$3
-       WHERE id_role=$1 RETURNING *`,
+       WHERE id_rol=$1 RETURNING *`,
       [
+        role.id,
         role.nombre,
         role.descripcion
       ]
@@ -74,23 +72,25 @@ export class RoleRepository implements RoleRepositoryPort {
 
     const row = result.rows[0];
     return new Role(
+      row.id_rol,
       row.nombre,
       row.descripcion
     );
   }
   
   
-    async listRole(): Promise<Role[]> {
+  async listRole(): Promise<Role[]> {
 
-  const result = await this.pool.query(
-    `SELECT nombre, descripcion FROM core.roles`
-  );
+    const result = await this.pool.query(
+      `SELECT id_rol, nombre, descripcion FROM core.roles`
+    );
 
-  return result.rows.map(row => 
-    new Role(
-      row.nombre,
-      row.descripcion
-    )
-  );
-}
+    return result.rows.map(row => 
+      new Role(
+        row.id_rol,
+        row.nombre,
+        row.descripcion
+      )
+    );
+  }
 }
