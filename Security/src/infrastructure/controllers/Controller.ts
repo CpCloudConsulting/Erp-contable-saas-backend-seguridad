@@ -133,14 +133,14 @@ export class Controller {
   }
 
   private ok(data: any) {
-    return { statusCode: 200, body: JSON.stringify(data) };
+    return { statusCode: 200, body: data };
   }
 
   private badRequest(message: string) {
-    return { statusCode: 400, body: JSON.stringify({ error: message }) };
+    return { statusCode: 400, body: { error: message } };
   }
 
   private notFound() {
-    return { statusCode: 404, body: JSON.stringify({ error: "Ruta no encontrada" }) };
+    return { statusCode: 404, body: { error: "Ruta no encontrada" } };
   }
 }

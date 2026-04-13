@@ -1,6 +1,14 @@
 resource "aws_apigatewayv2_api" "this" {
   name          = var.name
   protocol_type = "HTTP"
+
+  cors_configuration {
+    allow_origins = ["*"]
+    allow_methods = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+    allow_headers = ["Content-Type", "Authorization","x-schema"]
+    expose_headers = ["*"]
+    max_age = 3600
+  }
 }
 
 resource "aws_apigatewayv2_integration" "lambda" {

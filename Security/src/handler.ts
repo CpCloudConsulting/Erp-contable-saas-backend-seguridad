@@ -6,6 +6,11 @@ const controller = new Controller();
 
 export const handler = async (event: CustomAPIGatewayEvent) => {
   try {
+    const method = event.requestContext?.http?.method || event.httpMethod;
+
+    if (method === "OPTIONS") {
+      return response(200, "");
+    }
     const schema = event.headers["x-schema"] || event.requestContext.authorizer?.schema as string;
 
     if (!schema) {
@@ -13,7 +18,8 @@ export const handler = async (event: CustomAPIGatewayEvent) => {
     }
     await setTenantSchema(schema);
 
-    return await controller.handle(event);
+    const result = await controller.handle(event);
+    return response(result.statusCode, result.body);
 
   } catch (error: any) {
     return response(500, error.message);
@@ -23,6 +29,13 @@ export const handler = async (event: CustomAPIGatewayEvent) => {
 function response(status: number, body: any) {
   return {
     statusCode: status,
-    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization, x-schema",
+      "Access-Control-Allow-Methods": "OPTIONS,GET,POST,PUT,PATCH,DELETE"
+    },
+    body: typeof body === 'string' ? body : JSON.stringify(body),
+    isBase64Encoded: false
   };
 }

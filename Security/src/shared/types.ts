@@ -11,4 +11,5 @@ export interface CustomAPIGatewayEvent
   requestContext: APIGatewayProxyEventV2["requestContext"] & {
     authorizer: AuthorizerContext;
   };
+  httpMethod?: string;
 }
