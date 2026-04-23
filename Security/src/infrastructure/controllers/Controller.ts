@@ -18,6 +18,7 @@ export class Controller {
       "POST /module": this.createModule,
       "PUT /module": this.updateModule,
       "GET /module": this.listModule,
+      "GET /module/subscription/{idEmp}": this.listModuleSubscription,
       "POST /user": this.createUser,
       "PUT /user": this.updateUser,
       "GET /empresa/{id}/user": this.findUserByCompany,
@@ -104,6 +105,14 @@ export class Controller {
     const data = { idRol, idEmp}
     const container = new Container();
     const modules = await container.moduleByRole.execute(data);
+    return this.ok(modules);
+  }
+
+  private async listModuleSubscription(event: CustomAPIGatewayEvent) {
+    const idEmp = Number(event.pathParameters?.idEmp);
+    const data = { idEmp };
+    const container = new Container();
+    const modules = await container.listModuleSubscription.execute(data);
     return this.ok(modules);
   }
 

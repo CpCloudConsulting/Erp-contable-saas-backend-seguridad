@@ -6,3 +6,9 @@ export class Module {
     public is_active: boolean
   ) {}
 }
+
+export class Subscription {
+  constructor(
+    public idEmp: number,
+  ) {}
+}

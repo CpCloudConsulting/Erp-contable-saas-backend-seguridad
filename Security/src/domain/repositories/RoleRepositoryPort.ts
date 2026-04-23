@@ -31,5 +31,6 @@ export interface RoleRepositoryPort {
    */
   listModuleByRole(id: RoleModule): Promise<ModulePermission[]>;
 
+  
 
 }

@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 import { ModuleRepositoryPort } from "../../domain/repositories/ModuleRepositoryPort";
-import { Module } from "../../domain/entities/Module";
+import { Module, Subscription } from "../../domain/entities/Module";
 
 export class ModuleRepository implements ModuleRepositoryPort {
 
@@ -46,4 +46,25 @@ export class ModuleRepository implements ModuleRepositoryPort {
       row.is_active
     ));     
   }
+
+  async listModuleBySuscription(id: Subscription): Promise<ModuleSubscription[]> {
+    const result = await this.pool.query(
+      `SELECT DISTINCT
+          m.id_mod,
+          m.nombre
+        FROM core.suscripciones s
+        JOIN core.plan_modulos pm 
+          ON pm.id_plan = s.id_plan
+        JOIN core.modulos m 
+          ON m.id_mod = pm.id_mod
+        WHERE 
+          s.id_empresa = $1
+          AND s.estado = 'ACTIVA'
+          AND (s.fecha_fin IS NULL OR s.fecha_fin >= CURRENT_DATE)
+          AND pm.is_active = TRUE
+          AND m.is_active = TRUE;`, [id.idEmp]
+    );
+    return result.rows as ModuleSubscription[];
+  }
+
 }

@@ -1,7 +1,7 @@
 import { Pool } from "pg";
 import { Role, ListRole } from "../../domain/entities/Role";
 import { RoleRepositoryPort } from "../../domain/repositories/RoleRepositoryPort";
-import { RoleModule, RoleModuleAsign } from "../../domain/entities/RolModule";
+import { RoleModule, RoleModuleAsign} from "../../domain/entities/RolModule";
 
 export class RoleRepository implements RoleRepositoryPort {
 
@@ -138,4 +138,5 @@ export class RoleRepository implements RoleRepositoryPort {
       )
     );
   }
+
 }

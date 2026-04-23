@@ -1,4 +1,5 @@
 import { Module } from "../entities/Module";
+import { Subscription } from "../entities/RolModule";
 
 export interface ModuleRepositoryPort {
 
@@ -18,5 +19,7 @@ export interface ModuleRepositoryPort {
    * Lista todos los modulos
    */
   listModule(): Promise<Module[]>;
+
+  listModuleBySuscription(id: Subscription): Promise<ModuleSubscription[]>;
 
 }

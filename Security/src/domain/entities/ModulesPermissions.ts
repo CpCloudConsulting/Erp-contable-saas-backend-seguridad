@@ -6,6 +6,11 @@ interface ModulePermission {
   make: boolean;
 }
 
+interface ModuleSubscription {
+  id_mod: number;
+  nombre: string;
+}
+
 interface ResponseAsignRole {
   id_rol: number;
   id_mod: number;

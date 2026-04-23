@@ -15,6 +15,7 @@ import { CreateModule } from "../application/use-cases/module/CreateModule";
 import { ListModule } from "../application/use-cases/module/ListModule";
 import { UpdateModule } from "../application/use-cases/module/UpdateModule";
 import { AwsLambdaAdapter } from "../infrastructure/aws/lambda/aws-lambda.adapter";
+import { ListModuleSubscription } from "../application/use-cases/module/List-Module-subscription";
 
 export class Container {
 
@@ -40,5 +41,5 @@ export class Container {
   public createModule = new CreateModule(this.moduleRepository);
   public updateModule = new UpdateModule(this.moduleRepository);
   public listModule = new ListModule(this.moduleRepository);
-  
+  public listModuleSubscription = new ListModuleSubscription(this.moduleRepository);
 }

@@ -78,6 +78,12 @@ resource "aws_apigatewayv2_route" "get_module" {
   target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
 }
 
+resource "aws_apigatewayv2_route" "get_module_subscription" {
+  api_id    = aws_apigatewayv2_api.this.id
+  route_key = "GET /security/module/subscription/{idEmp}"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+}
+
 resource "aws_apigatewayv2_route" "post_module" {
   api_id    = aws_apigatewayv2_api.this.id
   route_key = "POST /security/module"
