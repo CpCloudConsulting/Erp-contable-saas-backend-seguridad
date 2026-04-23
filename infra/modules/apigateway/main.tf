@@ -20,7 +20,7 @@ resource "aws_apigatewayv2_integration" "lambda" {
 
 resource "aws_apigatewayv2_route" "get_roles" {
   api_id    = aws_apigatewayv2_api.this.id
-  route_key = "GET /security/roles"
+  route_key = "GET /security/roles/{id}"
   target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
 }
 
@@ -44,7 +44,7 @@ resource "aws_apigatewayv2_route" "post_roles_asign" {
 
 resource "aws_apigatewayv2_route" "get_role_module" {
   api_id    = aws_apigatewayv2_api.this.id
-  route_key = "GET /security/roles/{id}/modules"
+  route_key = "GET /security/roles/{idRol}/modules/{idEmp}"
   target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
 }
 

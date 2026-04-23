@@ -3,7 +3,7 @@ import { RoleRepository } from "../../../infrastructure/persistence/RoleReposito
 export class ListRole {
   constructor(private repo: RoleRepository) {}
 
-  async execute() {
-    return this.repo.listRole();
+  async execute(id: number) {
+    return this.repo.listRole(id);
   }
 }

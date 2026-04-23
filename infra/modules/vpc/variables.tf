@@ -2,5 +2,3 @@
 variable "name" {
   type = string
 }
-
-

@@ -21,6 +21,8 @@ export class UserRepository implements UserRepositoryPort {
       row.email,
       row.id_rol,
       row.id_empresa,
+      row.password_hash,
+      row.username,
       row.is_active
     ));
   }
@@ -28,8 +30,8 @@ export class UserRepository implements UserRepositoryPort {
   async createUser(user: User): Promise<User> {
   const result = await this.pool.query(
     `INSERT INTO core.usuarios 
-     (cognito_sub, nombre, apellido, email, id_rol, id_empresa, is_active)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)
+     (cognito_sub, nombre, apellido, email, id_rol, id_empresa, password_hash, username, is_active)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
      RETURNING *`,
     [
       user.cognito_sub,
@@ -38,6 +40,8 @@ export class UserRepository implements UserRepositoryPort {
       user.email,
       user.id_rol,
       user.id_empresa,
+      user.password_hash,
+      user.username,
       user.is_active
     ]
   );
@@ -52,19 +56,22 @@ export class UserRepository implements UserRepositoryPort {
     row.email,
     row.id_rol,
     row.id_empresa,
+    row.password_hash,
+    row.username,
     row.is_active,
   );
 }
 
   async updateUser(user: User): Promise<User> {
     const result = await this.pool.query(
-      `UPDATE core.usuarios SET nombre=$2, apellido=$3, email=$4
+      `UPDATE core.usuarios SET nombre=$2, apellido=$3, email=$4, username=$5
        WHERE id_user=$1 RETURNING *`,
       [
         user.id,
         user.nombre,
         user.apellido,
-        user.email
+        user.email,
+        user.username
       ]
     );
 
@@ -77,6 +84,8 @@ export class UserRepository implements UserRepositoryPort {
       row.email,
       row.id_rol,
       row.id_empresa,
+      row.password_hash,
+      row.username,
       row.is_active
     );
   }
@@ -97,6 +106,8 @@ export class UserRepository implements UserRepositoryPort {
       row.email,
       row.id_rol,
       row.id_empresa,
+      row.password_hash,
+      row.username,
       row.is_active
     );
   }

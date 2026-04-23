@@ -10,11 +10,11 @@ export class Controller {
 
   constructor() {
     this.routes = {
-      "GET /roles": this.listRole,
+      "GET /roles/{id}": this.listRole,
       "POST /roles": this.createRole,
       "PUT /roles": this.updateRole,
       "POST /roles/{id}/asign": this.asignRole,
-      "GET /roles/{id}/modules": this.moduleByRole,
+      "GET /roles/{idRol}/modules/{idEmp}": this.moduleByRole,
       "POST /module": this.createModule,
       "PUT /module": this.updateModule,
       "GET /module": this.listModule,
@@ -44,8 +44,12 @@ export class Controller {
   }
 
   private async listRole(event: CustomAPIGatewayEvent) {
+    const id = Number(event.pathParameters?.id);
+    if (!id) {
+      return this.badRequest("ID is required");
+    }
     const container = new Container();
-    const roles = await container.listRole.execute();
+    const roles = await container.listRole.execute(id);
     return this.ok(roles);
   }
 
@@ -90,19 +94,21 @@ export class Controller {
     }
     const body = JSON.parse(event.body || "{}");
     const container = new Container();
-    const role = await container.asignRole.execute(id, body.moduleIds);
+    const role = await container.asignRole.execute(id, body.modules);
     return this.ok(role);
   }
 
   private async moduleByRole(event: CustomAPIGatewayEvent) {
-    const id = event.pathParameters?.id;
+    const idRol = Number(event.pathParameters?.idRol);
+    const idEmp = Number(event.pathParameters?.idEmp);
+    const data = { idRol, idEmp}
     const container = new Container();
-    const modules = await container.moduleByRole.execute(id);
+    const modules = await container.moduleByRole.execute(data);
     return this.ok(modules);
   }
 
   private async createUser(event: CustomAPIGatewayEvent){
-     const body = JSON.parse(event.body || "{}");
+    const body = JSON.parse(event.body || "{}");
     const container = new Container();
     const user = await container.createUser.execute(body);
     return this.ok(user);

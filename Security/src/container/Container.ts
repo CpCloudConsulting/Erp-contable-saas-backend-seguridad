@@ -14,15 +14,17 @@ import { UpdateRole } from "../application/use-cases/role/UpdateRole";
 import { CreateModule } from "../application/use-cases/module/CreateModule";
 import { ListModule } from "../application/use-cases/module/ListModule";
 import { UpdateModule } from "../application/use-cases/module/UpdateModule";
+import { AwsLambdaAdapter } from "../infrastructure/aws/lambda/aws-lambda.adapter";
 
 export class Container {
 
   private userRepository = new UserRepository(getPool());
   private roleRepository = new RoleRepository(getPool());
   private moduleRepository = new ModuleRepository(getPool());
+  private lambdaInvoker = new AwsLambdaAdapter();
 
   //Funciones de usuarios
-  public createUser = new CreateUserCompany(this.userRepository);
+  public createUser = new CreateUserCompany(this.userRepository, this.lambdaInvoker);
   public findUserByCompany = new FindUserByCompany(this.userRepository);
   public findUserByCognito = new FindUserByCognito(this.userRepository);
   public updateUser = new UpdateUser(this.userRepository);

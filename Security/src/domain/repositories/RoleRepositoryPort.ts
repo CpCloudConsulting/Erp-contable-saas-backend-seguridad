@@ -18,18 +18,18 @@ export interface RoleRepositoryPort {
    /**
    * Lista todos los roles
    */
-  listRole(): Promise<Role[]>;
+  listRole(id: number): Promise<Role[]>;
 
    /**
    * asignar un rol
    */
-  asignRole(id: number, moduleIds: number[]): Promise<RoleModule[]>;
+  asignRole(id: number, modules: ModulePermission[]): Promise<ResponseAsignRole[]>;
 
 
    /**
    * Lista modulos permitidos por role
    */
-  listModuleByRole(id: string): Promise<string[]>;
+  listModuleByRole(id: RoleModule): Promise<ModulePermission[]>;
 
 
 }
