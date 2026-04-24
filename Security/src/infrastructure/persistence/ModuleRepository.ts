@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 import { ModuleRepositoryPort } from "../../domain/repositories/ModuleRepositoryPort";
-import { Module, Subscription } from "../../domain/entities/Module";
+import { ModelSubscription, Module, Subscription } from "../../domain/entities/Module";
 
 export class ModuleRepository implements ModuleRepositoryPort {
 
@@ -64,7 +64,15 @@ export class ModuleRepository implements ModuleRepositoryPort {
           AND pm.is_active = TRUE
           AND m.is_active = TRUE;`, [id.idEmp]
     );
-    return result.rows as ModuleSubscription[];
+    return result.rows.map(
+        row => new ModelSubscription(
+          row.id_mod,
+          row.nombre,
+          false,
+          false,
+          false
+        )
+      );
   }
 
 }

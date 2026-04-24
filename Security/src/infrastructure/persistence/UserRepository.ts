@@ -67,7 +67,7 @@ export class UserRepository implements UserRepositoryPort {
       `UPDATE core.usuarios SET nombre=$2, apellido=$3, email=$4, username=$5
        WHERE id_user=$1 RETURNING *`,
       [
-        user.id,
+        user.id_user,
         user.nombre,
         user.apellido,
         user.email,
