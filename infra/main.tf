@@ -75,12 +75,6 @@ module "lambda" {
   lambda_source_dir = "${path.root}/../Security/dist"
 }
 
-module "api" {
-  source             = "./modules/apigateway"
-  name               = "erp-security-api"
-  lambda_invoke_arn  = module.lambda.invoke_arn
-  lambda_name       = module.lambda.function_name
-}
 
 module "iam" {
   source = "./modules/iam"

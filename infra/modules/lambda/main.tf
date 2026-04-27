@@ -24,3 +24,15 @@ data "archive_file" "lambda_zip" {
   output_path = "${path.module}/dist.zip"
 }
 
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
+resource "aws_lambda_permission" "apigw" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.this.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"
+}
+

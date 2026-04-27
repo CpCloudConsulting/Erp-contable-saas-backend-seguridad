@@ -1,161 +1,126 @@
+import { Request, Response } from "express";
 import { Container } from "../../container/Container";
-import { CustomAPIGatewayEvent } from "../../shared/types";
 
-type RouteHandler = (event: CustomAPIGatewayEvent) => Promise<any>;
+export class SecurityController {
+  private readonly services = new Container();
 
-export class Controller {
-
-  private routes: Record<string, RouteHandler>;
-  private Domain = "/security";
-
-  constructor() {
-    this.routes = {
-      "GET /roles/{id}": this.listRole,
-      "POST /roles": this.createRole,
-      "PUT /roles": this.updateRole,
-      "POST /roles/{id}/asign": this.asignRole,
-      "GET /roles/{idRol}/modules/{idEmp}": this.moduleByRole,
-      "POST /module": this.createModule,
-      "PUT /module": this.updateModule,
-      "GET /module": this.listModule,
-      "GET /module/subscription/{idEmp}": this.listModuleSubscription,
-      "POST /user": this.createUser,
-      "PUT /user": this.updateUser,
-      "GET /empresa/{id}/user": this.findUserByCompany,
-      "GET /user/{id}/cognito": this.findUser,
-    };
+  async findUserByCompany(req: Request, res: Response) {
+    const id = Number(req.params.id);
+    if (!id || isNaN(id)) {
+      return res.status(400).json({ error: "Invalid ID" });
+    }
+    const result = await this.services.findUserByCompany.execute(id);
+    return res.json(result);
   }
 
+  async listRole(req: Request, res: Response) {
+    const id = Number(req.params.id);
+    if (!id || isNaN(id)) {
+      return res.status(400).json({ error: "Invalid ID" });
+    }
+    const result = await this.services.listRole.execute(id);
+    return res.json(result);
+  }
 
-  async handle(event: CustomAPIGatewayEvent) {
-    let routeKey = event.routeKey;
-    routeKey = routeKey.replace(this.Domain, "");
+  async createRole(req: Request, res: Response) {
+    const body = req.body;
+    if (!body) {
+      return res.status(400).json({ error: "Invalid request body" });
+    }
+    const role = await this.services.createRole.execute(body);
+    return res.json(role);
+  }
+
+  async updateRole(req: Request, res: Response) {
+    const body = req.body;
+    if (!body) {
+      return res.status(400).json({ error: "Invalid request body" });
+    }
+    const role = await this.services.updateRole.execute(body);
+    return res.json(role);
+  }
+
+  async createModule (req: Request, res: Response) {
+    const body = req.body;
+    if (!body) {
+      return res.status(400).json({ error: "Invalid request body" });
+    }
+
+    const module = await this.services.createModule.execute(body);
+    return res.json(module);
+  }
+
+  async updateModule (req: Request, res: Response) {
+    const body = req.body;
+    if (!body) {
+      return res.status(400).json({ error: "Invalid request body" });
+    }
+    const module = await this.services.updateModule.execute(body);
+    return res.json(module);
+  }
+
+  async listModule(req: Request, res: Response) {
+    const modules = await this.services.listModule.execute();
+    return res.json(modules);
+  }
+
+  async asignRole(req: Request, res: Response) {
+    const id = Number(req.params.id);
+    if (!id || isNaN(id)) {
+      return res.status(400).json({ error: "Invalid ID" });
+    }
     
-    const handler = this.routes[routeKey];
-
-    if (!handler) {
-      return this.notFound();
+    const body = req.body;
+    if (!body) {
+      return res.status(400).json({ error: "Invalid request body" });
     }
+    const role = await this.services.asignRole.execute(id, body.modules);
+    return res.json(role);
+  }
 
-    try {
-      return await handler.call(this, event);
-    } catch (error: any) {
-      return this.badRequest(error.message);
+  async moduleByRole(req: Request, res: Response) {
+    const idRol = Number(req.params.idRol);
+    const idEmp = Number(req.params.idEmp);
+    if (!idRol || isNaN(idRol) || !idEmp || isNaN(idEmp)) {
+      return res.status(400).json({ error: "Invalid IDs" });
     }
-  }
-
-  private async listRole(event: CustomAPIGatewayEvent) {
-    const id = Number(event.pathParameters?.id);
-    if (!id) {
-      return this.badRequest("ID is required");
-    }
-    const container = new Container();
-    const roles = await container.listRole.execute(id);
-    return this.ok(roles);
-  }
-
-  private async createRole(event: CustomAPIGatewayEvent) {
-    const body = JSON.parse(event.body || "{}");
-    const container = new Container();
-    const role = await container.createRole.execute(body);
-    return this.ok(role);
-  }
-
-  private async updateRole(event: CustomAPIGatewayEvent) {
-    const body = JSON.parse(event.body || "{}");
-    const container = new Container();
-    const role = await container.updateRole.execute(body);
-    return this.ok(role);
-  }
-
-  private async createModule (event: CustomAPIGatewayEvent) {
-    const body = JSON.parse(event.body || "{}");
-    const container = new Container();
-    const module = await container.createModule.execute(body);
-    return this.ok(module);
-  }
-
-  private async updateModule (event: CustomAPIGatewayEvent) {
-    const body = JSON.parse(event.body || "{}");
-    const container = new Container();
-    const module = await container.updateModule.execute(body);
-    return this.ok(module);
-  }
-
-  private async listModule(event: CustomAPIGatewayEvent) {
-    const container = new Container();
-    const modules = await container.listModule.execute();
-    return this.ok(modules);
-  }
-
-  private async asignRole(event: CustomAPIGatewayEvent) {
-    const id = Number(event.pathParameters?.id);
-    if (!id) {
-      return this.badRequest("ID is required");
-    }
-    const body = JSON.parse(event.body || "{}");
-    const container = new Container();
-    const role = await container.asignRole.execute(id, body.modules);
-    return this.ok(role);
-  }
-
-  private async moduleByRole(event: CustomAPIGatewayEvent) {
-    const idRol = Number(event.pathParameters?.idRol);
-    const idEmp = Number(event.pathParameters?.idEmp);
     const data = { idRol, idEmp}
-    const container = new Container();
-    const modules = await container.moduleByRole.execute(data);
-    return this.ok(modules);
+    const modules = await this.services.moduleByRole.execute(data);
+    return res.json(modules);
   }
 
-  private async listModuleSubscription(event: CustomAPIGatewayEvent) {
-    const idEmp = Number(event.pathParameters?.idEmp);
-    const data = { idEmp };
-    const container = new Container();
-    const modules = await container.listModuleSubscription.execute(data);
-    return this.ok(modules);
-  }
-
-  private async createUser(event: CustomAPIGatewayEvent){
-    const body = JSON.parse(event.body || "{}");
-    const container = new Container();
-    const user = await container.createUser.execute(body);
-    return this.ok(user);
-  }
-
-  private async updateUser(event: CustomAPIGatewayEvent){
-    const body = JSON.parse(event.body || "{}");
-    const container = new Container();
-    const user = await container.updateUser.execute(body);
-    return this.ok(user);
-  }
-
-  private async findUserByCompany(event: CustomAPIGatewayEvent){
-    const id = Number(event.pathParameters?.id);
-    const container = new Container();
-    const user = await container.findUserByCompany.execute(id);
-    return this.ok(user);
-  }
-
-   private async findUser(event: CustomAPIGatewayEvent){
-    const id = event.pathParameters?.id;
-    if (!id) {
-      return this.badRequest("ID is required");
+  async listModuleSubscription(req: Request, res: Response) {
+    const idEmp = Number(req.params.idEmp);
+    if (!idEmp || isNaN(idEmp)) {
+      return res.status(400).json({ error: "Invalid ID" });
     }
-    const container = new Container();
-    const user = await container.findUserByCognito.execute(id);
-    return this.ok(user);
+    const data = { idEmp };
+    const modules = await this.services.listModuleSubscription.execute(data);
+    return res.json(modules);
   }
 
-  private ok(data: any) {
-    return { statusCode: 200, body: data };
+  async createUser(req: Request, res: Response){
+    const body = req.body;
+    if (!body) {
+      return res.status(400).json({ error: "Invalid request body" });
+    }
+    const user = await this.services.createUser.execute(body);
+    return res.json(user);
   }
 
-  private badRequest(message: string) {
-    return { statusCode: 400, body: { error: message } };
+  async updateUser(req: Request, res: Response){
+    const body = req.body;
+    if (!body) {
+      return res.status(400).json({ error: "Invalid request body" });
+    }
+    const user = await this.services.updateUser.execute(body);
+    return res.json(user);
   }
 
-  private notFound() {
-    return { statusCode: 404, body: { error: "Ruta no encontrada" } };
+  async findUser(req: Request, res: Response){
+    const id = req.params.id as string;
+    const user = await this.services.findUserByCognito.execute(id);
+    return res.json(user);
   }
+
 }

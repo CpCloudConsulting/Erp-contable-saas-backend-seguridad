@@ -9,12 +9,17 @@
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.1030.0",
     "@aws-sdk/client-lambda": "^3.1032.0",
+    "cors": "^2.8.6",
     "dotenv": "^17.3.1",
+    "express": "^5.2.1",
     "pg": "^8.11.0",
+    "serverless-http": "^4.0.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/node": "^20.0.0",
     "@types/pg": "^8.18.0",
     "esbuild": "^0.27.5",
